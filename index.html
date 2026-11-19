@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InfoBase | Database Management</title>
+<style>
+:root{--green:#08752b;--dark:#075b24;--yellow:#ffd900;--pale:#f2faf2;--ink:#243528;--muted:#687568}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:#fff;line-height:1.6}
+header{position:sticky;top:0;z-index:50;background:var(--dark);border-bottom:4px solid var(--yellow);padding:14px 7%;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{font-size:25px;font-weight:800;color:#fff;text-decoration:none;letter-spacing:.3px}
+.logo span{color:var(--yellow)}
+nav{display:flex;flex-wrap:wrap;gap:16px}
+nav a{color:#fff;text-decoration:none;font-size:13px;font-weight:700}
+nav a:hover{color:var(--yellow)}
+section{padding:65px 8%;scroll-margin-top:75px}
+.hero{min-height:470px;display:flex;align-items:center;justify-content:space-between;gap:45px;background:linear-gradient(120deg,#f1faf1,#fff)}
+.hero-text{max-width:620px}
+.eyebrow{font-size:12px;letter-spacing:2px;color:var(--green);font-weight:800}
+.hero h1{font-size:clamp(34px,5vw,54px);line-height:1.12;margin:14px 0;color:#1c3522}
+.hero h1 span{color:var(--green)}
+.hero p{color:#566458;max-width:600px;margin-bottom:22px}
+.button,.add-button{display:inline-block;border:0;border-radius:7px;background:var(--green);color:white;padding:12px 18px;font-weight:700;text-decoration:none;cursor:pointer}
+.button:hover,.add-button:hover{background:var(--dark)}
+.database-card{background:#fff;padding:25px;border-radius:14px;box-shadow:0 12px 35px #1230;min-width:270px;border-top:5px solid var(--yellow)}
+.database-card h2{color:var(--green);margin-bottom:12px}
+.database-card p{font-size:14px;margin:7px 0}
+.status{display:inline-block;background:#e0f5e4;color:var(--green);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800}
+.section-title{text-align:center;color:var(--green);font-size:30px;margin-bottom:8px}
+.section-description{text-align:center;color:var(--muted);max-width:760px;margin:0 auto 32px}
+.about{background:#fff}
+.about-content,.concept-container,.organize-container,.benefit-container{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.about-box,.concept-card,.organize-card,.benefit-card{background:var(--pale);padding:23px;border-radius:12px;border:1px solid #e0eee1}
+.about-box h3,.concept-card h3,.organize-card h3,.benefit-card h3{color:var(--green);margin:7px 0}
+.concepts,.records,.benefits{background:#f7fbf7}
+.concept-container,.organize-container,.benefit-container{grid-template-columns:repeat(3,minmax(0,1fr))}
+.concept-number{font-weight:900;color:#9a8100;font-size:13px}
+.organize{background:#fff}
+.records{background:#f7fbf7}
+.record-box{background:#fff;padding:25px;border-radius:14px;box-shadow:0 5px 24px #17301a12}
+.record-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:20px}
+.record-heading h3{color:var(--green)}
+.record-heading p{font-size:13px;color:var(--muted)}
+.record-tools{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:15px}
+#searchInput{flex:1;min-width:220px}
+#searchInput,#courseFilter,.form-group input,.form-group select{padding:11px 12px;border:1px solid #cbd8cc;border-radius:7px;background:white;font:inherit;font-size:14px}
+#courseFilter{min-width:150px}
+#searchInput:focus,#courseFilter:focus,.form-group input:focus,.form-group select:focus{outline:2px solid #b8dfbd;border-color:var(--green)}
+.table-note{font-size:12px;color:var(--muted);margin:12px 0}
+.table-wrapper{overflow-x:auto}
+table{width:100%;min-width:700px;border-collapse:collapse;font-size:13px}
+thead{background:var(--green);color:white}
+th,td{text-align:left;padding:12px;border-bottom:1px solid #e4ece4}
+tbody tr:nth-child(even){background:#f5faf5}
+tbody tr:hover{background:#eaf7e9}
+.record-id{font-weight:800;color:var(--green)}
+.active-status,.inactive-status{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:800}
+.active-status{background:#d9f5df;color:var(--green)}
+.inactive-status{background:#fff1c7;color:#886300}
+.action-buttons{display:flex;gap:6px}
+.edit-button,.delete-button{border:0;border-radius:5px;padding:6px 9px;font-size:11px;font-weight:700;cursor:pointer}
+.edit-button{background:#fff0b3;color:#705700}
+.delete-button{background:#ffe1df;color:#a32820}
+.empty-message{text-align:center;padding:22px;color:var(--muted)}
+.media-section{background:#fff}
+.gallery-container{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-bottom:30px}
+.gallery-card{border:1px solid #e0ece1;border-radius:13px;overflow:hidden;background:#fff;box-shadow:0 5px 20px #1231}
+.gallery-card img{display:block;width:100%;height:210px;object-fit:cover}
+.gallery-caption{padding:15px}
+.gallery-caption h3{color:var(--green);margin-bottom:5px}
+.visual-database{height:190px;background:linear-gradient(135deg,#eaf7eb,#d6ebd9);padding:18px;display:flex;align-items:center;justify-content:center}
+.mini-window{width:100%;max-width:300px;background:#fff;border-radius:8px;box-shadow:0 5px 15px #1232;overflow:hidden;font-size:10px}
+.mini-top{background:var(--green);color:white;padding:7px 10px;font-weight:700}
+.mini-grid{display:grid;grid-template-columns:1fr 1.5fr 1fr;padding:7px;gap:4px}
+.mini-grid span{background:#eff7ef;padding:6px 4px;border-radius:3px;text-align:center}
+.mini-grid .head{background:#d9eedc;color:var(--green);font-weight:800}
+.database-illustration{height:190px;background:linear-gradient(135deg,#f7f2d5,#fff9df);display:flex;align-items:center;justify-content:center;gap:12px}
+.db-cylinder{width:65px;height:85px;border-radius:50%/14%;background:var(--green);position:relative;box-shadow:inset 0 12px #ffffff30}
+.db-cylinder:before,.db-cylinder:after{content:"";position:absolute;left:0;width:100%;height:23px;border:3px solid var(--yellow);border-radius:50%}
+.db-cylinder:before{top:0}.db-cylinder:after{bottom:13px;border-top:0}
+.db-lines{display:grid;gap:8px}
+.db-lines span{display:block;width:85px;height:10px;background:#c8dfc9;border-radius:8px}
+.video-container{background:#f3faf3;border-radius:14px;padding:25px;text-align:center}
+.video-container h3{color:var(--green);margin-bottom:6px}
+.video-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}
+.video-card{background:#fff;padding:12px;border-radius:10px;text-align:left}
+.video-card h4{color:var(--green);margin:4px 0 8px}
+.video-card iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:7px}
+.benefit-card{text-align:center}
+footer{background:var(--dark);border-top:4px solid var(--yellow);color:#fff;text-align:center;padding:25px 8%}
+footer p{font-size:13px;margin:4px}
+.modal{display:none;position:fixed;inset:0;z-index:100;background:#0008;justify-content:center;align-items:center;padding:18px}
+.modal.show{display:flex}
+.modal-content{background:#fff;padding:25px;border-radius:13px;width:100%;max-width:460px;max-height:90vh;overflow:auto}
+.modal-content h2{color:var(--green);margin-bottom:17px}
+.form-group{margin-bottom:13px}
+.form-group label{display:block;font-weight:700;font-size:13px;margin-bottom:5px}
+.form-group input,.form-group select{width:100%}
+.form-actions{display:flex;gap:10px;margin-top:18px}
+.cancel-button{border:0;border-radius:7px;padding:11px 18px;background:#e9eee9;cursor:pointer;font-weight:700}
+@media(max-width:850px){header{align-items:flex-start;flex-direction:column}.hero{flex-direction:column;align-items:flex-start}.database-card{width:100%}.concept-container,.organize-container,.benefit-container,.gallery-container{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){section{padding:45px 5%}nav{gap:10px}nav a{font-size:12px}.about-content,.concept-container,.organize-container,.benefit-container,.gallery-container,.video-grid{grid-template-columns:1fr}.record-box{padding:14px}.record-tools{align-items:stretch}#searchInput,#courseFilter,.add-button{width:100%}.record-heading{align-items:flex-start;flex-direction:column}}
+
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="#home">Info<span>Base</span></a>
+  <nav aria-label="Main navigation">
+    <a href="#home">Home</a><a href="#about">About</a><a href="#concepts">Concepts</a>
+    <a href="#organize">Organize Data</a><a href="#records">Records</a><a href="#media">Media</a><a href="#benefits">Benefits</a>
+  </nav>
+</header>
+
+<main>
+<section class="hero" id="home">
+  <div class="hero-text">
+    <span class="eyebrow">DATABASE MANAGEMENT SYSTEM</span>
+    <h1>Organize Information.<br><span>Manage Records.</span></h1>
+    <p>InfoBase is a student project that demonstrates how information can be organized, searched, updated, and managed using a database-style system. It provides a simple and organized way to view student records.</p>
+    <a href="#records" class="button">Explore Records</a>
+  </div>
+  <div class="database-card">
+    <h2>Database Overview</h2>
+    <p><strong>System Name:</strong> InfoBase</p><p><strong>Category:</strong> Database Management</p>
+    <p><strong>Information:</strong> Student Records</p><p><strong>Organization:</strong> Tables and Fields</p>
+    <p><strong>Status:</strong> <span class="status">Demo System</span></p>
+  </div>
+</section>
+
+<section class="about" id="about">
+  <h2 class="section-title">About InfoBase</h2>
+  <p class="section-description">Understanding the purpose of organizing and managing data.</p>
+  <div class="about-content">
+    <article class="about-box"><h3>What is InfoBase?</h3><p>InfoBase is a sample database management webpage designed to present student information in a structured and organized table. It demonstrates basic record management functions in a simple and user-friendly interface.</p></article>
+    <article class="about-box"><h3>Our Purpose</h3><p>The purpose of InfoBase is to demonstrate how information can be stored, organized, searched, and updated. It helps users understand the importance of accurate records and systematic data management in schools and offices.</p></article>
+  </div>
+</section>
+
+<section class="concepts" id="concepts">
+  <h2 class="section-title">Database Concepts</h2><p class="section-description">Learn the basic components and functions of a database.</p>
+  <div class="concept-container">
+    <article class="concept-card"><span class="concept-number">01</span><h3>Database</h3><p>An organized collection of related information that can be stored, accessed, and managed.</p></article>
+    <article class="concept-card"><span class="concept-number">02</span><h3>Table</h3><p>A structure that arranges information into rows and columns for easier viewing and organization.</p></article>
+    <article class="concept-card"><span class="concept-number">03</span><h3>Record</h3><p>A complete entry containing information about one student, such as an ID, name, and course.</p></article>
+    <article class="concept-card"><span class="concept-number">04</span><h3>Field</h3><p>A specific category of information in a table, such as Student ID, Full Name, or Year Level.</p></article>
+    <article class="concept-card"><span class="concept-number">05</span><h3>Data Retrieval</h3><p>The process of finding and viewing specific information when it is needed.</p></article>
+    <article class="concept-card"><span class="concept-number">06</span><h3>Data Management</h3><p>The process of adding, updating, organizing, and removing records when appropriate.</p></article>
+  </div>
+</section>
+
+<section class="organize" id="organize">
+  <h2 class="section-title">How to Organize Data</h2><p class="section-description">Proper data organization makes information easier to find, understand, update, and maintain.</p>
+  <div class="organize-container">
+    <article class="organize-card"><span class="concept-number">01</span><h3>Identify the Information</h3><p>Determine which details need to be collected, such as Student ID, Full Name, Course, Year Level, and Status.</p></article>
+    <article class="organize-card"><span class="concept-number">02</span><h3>Use Tables and Fields</h3><p>Arrange information in a table with clear column headings. Each field should represent one type of information.</p></article>
+    <article class="organize-card"><span class="concept-number">03</span><h3>Assign a Unique ID</h3><p>Give each student a unique identification number to distinguish records, even when names are similar.</p></article>
+    <article class="organize-card"><span class="concept-number">04</span><h3>Keep Data Consistent</h3><p>Use consistent formats for course codes, names, year levels, and status labels.</p></article>
+    <article class="organize-card"><span class="concept-number">05</span><h3>Review and Update Records</h3><p>Check for missing, incorrect, or duplicate information and update records when details change.</p></article>
+    <article class="organize-card"><span class="concept-number">06</span><h3>Protect the Information</h3><p>Restrict access to authorized users and avoid sharing personal information unnecessarily.</p></article>
+  </div>
+</section>
+
+<section class="records" id="records">
+  <h2 class="section-title">Student Records</h2>
+  <p class="section-description">View, search, filter, add, edit, and delete sample student records using the interactive table below.</p>
+  <div class="record-box">
+    <div class="record-heading"><div><h3>Database Records</h3><p>Sample student information</p></div><span class="status">Demo System</span></div>
+    <div class="record-tools">
+      <input type="search" id="searchInput" placeholder="Search student records..." aria-label="Search student records">
+      <select id="courseFilter" aria-label="Filter by course"><option value="">All Courses</option><option value="BSOA">BSOA</option><option value="COA">COA</option><option value="BSIT">BSIT</option></select>
+      <button type="button" class="add-button" id="addRecordButton">+ Add Record</button>
+    </div>
+    <p class="table-note" id="recordCount" aria-live="polite">Total Records: 5</p>
+    <div class="table-wrapper"><table><thead><tr><th>Student ID</th><th>Full Name</th><th>Course</th><th>Year Level</th><th>Status</th><th>Actions</th></tr></thead><tbody id="recordsBody"></tbody></table></div>
+    <p id="emptyMessage" class="empty-message" hidden>No records found. Try another search or filter.</p>
+    <p class="table-note">Note: This project uses sample data stored in your browser and is not connected to a live school database.</p>
+  </div>
+</section>
+
+<section class="media-section" id="media">
+  <h2 class="section-title">InfoBase Media Gallery</h2>
+  <p class="section-description">Selected pictures showing student information management, organized records, registrar work, and data privacy.</p>
+
+  <div class="gallery-container">
+    <article class="gallery-card">
+      <img src="images/student-management.jpg" alt="Student information management at a computer">
+      <div class="gallery-caption"><h3>1. Student Information Management</h3><p>Digital student profiles and records.</p></div>
+    </article>
+    <article class="gallery-card">
+      <img src="images/organized-database.jpg" alt="Organized student database table">
+      <div class="gallery-caption"><h3>2. Organized Database</h3><p>Structured student information and records.</p></div>
+    </article>
+    <article class="gallery-card">
+      <img src="images/registrar-enrollment.jpg" alt="Registrar staff managing enrollment records">
+      <div class="gallery-caption"><h3>3. Registrar and Enrollment</h3><p>Managing enrollment and academic records.</p></div>
+    </article>
+    <article class="gallery-card">
+      <img src="images/data-privacy-security.jpg" alt="Data privacy and security information on a computer">
+      <div class="gallery-caption"><h3>4. Data Privacy and Security</h3><p>Protecting confidential student information.</p></div>
+    </article>
+  </div>
+  <div class="video-container">
+    <h3>Database Management Video Tutorials</h3>
+    <p>This video demonstrates a School Records Management System and how student information can be organized.</p>
+    <div class="video-grid">
+      <article class="video-card"><h4>School Records Management System – SoftTechSolutions</h4><iframe src="https://www.youtube-nocookie.com/embed/9akQ_waP9AI" title="School Records Management System by SoftTechSolutions" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></article>
+      <article class="video-card"><h4>Why Are Databases Important? (8 Key Reasons)</h4><p>This video explains why databases are important and how they help organize, store, and manage information.</p><iframe src="https://www.youtube-nocookie.com/embed/uyopdNzLsJE" title="Why Are Databases Important? (8 Key Reasons)" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></article>
+    </div>
+    <p class="table-note">Video playback requires an internet connection.</p>
+  </div>
+</section>
+
+<section class="benefits" id="benefits">
+  <h2 class="section-title">Benefits of Database Management</h2><p class="section-description">A well-organized database helps users manage information more efficiently, accurately, and systematically.</p>
+  <div class="benefit-container">
+    <article class="benefit-card"><h3>Organized Information</h3><p>Information is arranged in structured rows and columns, making records easier to read and maintain.</p></article>
+    <article class="benefit-card"><h3>Faster Data Retrieval</h3><p>Users can search for student names, IDs, or courses instead of checking every record manually.</p></article>
+    <article class="benefit-card"><h3>Easy Record Management</h3><p>Records can be added, edited, and deleted when necessary to keep information updated.</p></article>
+    <article class="benefit-card"><h3>Improved Accuracy</h3><p>Unique IDs and consistent formats help prevent duplicate entries and reduce mistakes.</p></article>
+    <article class="benefit-card"><h3>Time Efficiency</h3><p>Searching and filtering records reduces repetitive tasks and saves time.</p></article>
+    <article class="benefit-card"><h3>Better Data Protection</h3><p>Responsible database management includes protecting personal information and limiting access.</p></article>
+  </div>
+</section>
+</main>
+
+<footer><p><strong>InfoBase | Database Management</strong></p><p>A student project demonstrating the organization and management of information.</p><p>&copy; 2026 InfoBase. Sample data only.</p></footer>
+
+<div class="modal" id="recordModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-content">
+    <h2 id="modalTitle">Add New Record</h2>
+    <form id="recordForm">
+      <div class="form-group"><label for="studentId">Student ID</label><input id="studentId" type="text" maxlength="30" placeholder="Example: STU-006" required></div>
+      <div class="form-group"><label for="studentName">Full Name</label><input id="studentName" type="text" maxlength="100" placeholder="Enter full name" required></div>
+      <div class="form-group"><label for="studentCourse">Course</label><select id="studentCourse" required><option value="">Select Course</option><option value="BSOA">BSOA</option><option value="COA">COA</option><option value="BSIT">BSIT</option></select></div>
+      <div class="form-group"><label for="studentYear">Year Level</label><select id="studentYear" required><option value="">Select Year Level</option><option value="1st Year">1st Year</option><option value="2nd Year">2nd Year</option><option value="3rd Year">3rd Year</option><option value="4th Year">4th Year</option></select></div>
+      <div class="form-group"><label for="studentStatus">Status</label><select id="studentStatus" required><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div>
+      <div class="form-actions"><button type="submit" class="add-button">Save Record</button><button type="button" class="cancel-button" id="cancelButton">Cancel</button></div>
+    </form>
+  </div>
+</div>
+
+<script>
+"use strict";
+const tableBody=document.getElementById("recordsBody");
+const searchInput=document.getElementById("searchInput");
+const courseFilter=document.getElementById("courseFilter");
+const recordModal=document.getElementById("recordModal");
+const recordForm=document.getElementById("recordForm");
+const studentIdInput=document.getElementById("studentId");
+const defaultRecords=[
+ {id:"STU-001",name:"Maria Santos",course:"BSOA",year:"1st Year",status:"Active"},
+ {id:"STU-002",name:"John Reyes",course:"COA",year:"2nd Year",status:"Active"},
+ {id:"STU-003",name:"Angela Cruz",course:"BSIT",year:"3rd Year",status:"Inactive"},
+ {id:"STU-004",name:"Mark Dela Rosa",course:"BSOA",year:"2nd Year",status:"Active"},
+ {id:"STU-005",name:"Sofia Garcia",course:"COA",year:"4th Year",status:"Active"}
+];
+function loadRecords(){
+ try{const saved=localStorage.getItem("infobaseRecords");if(saved===null)return defaultRecords.map(r=>({...r}));const parsed=JSON.parse(saved);return Array.isArray(parsed)?parsed:defaultRecords.map(r=>({...r}));}
+ catch(error){return defaultRecords.map(r=>({...r}));}
+}
+let records=loadRecords();
+let editingId=null;
+function saveRecords(){
+ try{localStorage.setItem("infobaseRecords",JSON.stringify(records));}
+ catch(error){alert("The browser could not save the records. Check your browser storage settings.");}
+}
+function createCell(value,className=""){
+ const cell=document.createElement("td");cell.textContent=value;if(className)cell.className=className;return cell;
+}
+function renderRecords(){
+ const query=searchInput.value.toLowerCase().trim();
+ const selectedCourse=courseFilter.value;
+ const filtered=records.filter(record=>{
+  const searchable=[record.id,record.name,record.course,record.year,record.status].join(" ").toLowerCase();
+  return searchable.includes(query)&&(!selectedCourse||record.course===selectedCourse);
+ });
+ tableBody.replaceChildren();
+ filtered.forEach(record=>{
+  const row=document.createElement("tr");
+  row.append(createCell(record.id,"record-id"),createCell(record.name),createCell(record.course),createCell(record.year));
+  const statusCell=document.createElement("td");
+  const badge=document.createElement("span");badge.className=record.status==="Active"?"active-status":"inactive-status";badge.textContent=record.status;
+  statusCell.appendChild(badge);row.appendChild(statusCell);
+  const actionsCell=document.createElement("td");
+  const actions=document.createElement("div");actions.className="action-buttons";
+  const editButton=document.createElement("button");editButton.type="button";editButton.className="edit-button";editButton.textContent="Edit";editButton.addEventListener("click",()=>editRecord(record.id));
+  const deleteButton=document.createElement("button");deleteButton.type="button";deleteButton.className="delete-button";deleteButton.textContent="Delete";deleteButton.addEventListener("click",()=>deleteRecord(record.id));
+  actions.append(editButton,deleteButton);actionsCell.appendChild(actions);row.appendChild(actionsCell);tableBody.appendChild(row);
+ });
+ document.getElementById("recordCount").textContent=`Showing ${filtered.length} of ${records.length} records`;
+ document.getElementById("emptyMessage").hidden=filtered.length!==0;
+}
+function openModal(record=null){
+ recordForm.reset();editingId=record?record.id:null;
+ document.getElementById("modalTitle").textContent=record?"Edit Record":"Add New Record";
+ studentIdInput.disabled=Boolean(record);
+ if(record){
+  studentIdInput.value=record.id;
+  document.getElementById("studentName").value=record.name;
+  document.getElementById("studentCourse").value=record.course;
+  document.getElementById("studentYear").value=record.year;
+  document.getElementById("studentStatus").value=record.status;
+ }
+ recordModal.classList.add("show");document.getElementById("studentName").focus();
+}
+function closeModal(){recordModal.classList.remove("show");recordForm.reset();studentIdInput.disabled=false;editingId=null;}
+function editRecord(id){const record=records.find(item=>item.id===id);if(record)openModal(record);}
+function deleteRecord(id){
+ const record=records.find(item=>item.id===id);if(!record)return;
+ if(confirm(`Are you sure you want to delete ${record.name} (${record.id})?`)){
+  records=records.filter(item=>item.id!==id);saveRecords();renderRecords();
+ }
+}
+recordForm.addEventListener("submit",event=>{
+ event.preventDefault();
+ const record={
+  id:studentIdInput.value.trim(),
+  name:document.getElementById("studentName").value.trim(),
+  course:document.getElementById("studentCourse").value,
+  year:document.getElementById("studentYear").value,
+  status:document.getElementById("studentStatus").value
+ };
+ if(!record.id||!record.name){alert("Please complete all required fields.");return;}
+ if(editingId){
+  const index=records.findIndex(item=>item.id===editingId);if(index!==-1)records[index]=record;
+ }else{
+  const duplicate=records.some(item=>item.id.toLowerCase()===record.id.toLowerCase());
+  if(duplicate){alert("That Student ID already exists. Please use a unique ID.");studentIdInput.focus();return;}
+  records.push(record);
+ }
+ saveRecords();renderRecords();closeModal();
+});
+document.getElementById("addRecordButton").addEventListener("click",()=>openModal());
+document.getElementById("cancelButton").addEventListener("click",closeModal);
+searchInput.addEventListener("input",renderRecords);
+courseFilter.addEventListener("change",renderRecords);
+recordModal.addEventListener("click",event=>{if(event.target===recordModal)closeModal();});
+document.addEventListener("keydown",event=>{if(event.key==="Escape"&&recordModal.classList.contains("show"))closeModal();});
+renderRecords();
+
+</script>
+</body>
+</html>
